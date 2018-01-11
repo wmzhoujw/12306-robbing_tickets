@@ -50,7 +50,7 @@
 &emsp;第四种结果：表示查票失败，可能有以下原因：  
 &emsp;&emsp; * 填入的车次不存在  
 &emsp;&emsp; * 填入的车次没有该座席  
-&emsp;&emsp; * 该车次当前时间未开放预订
+&emsp;&emsp; * 该车次的车票当前时间未开放预订
 
   ![](https://github.com/chaseSpace/Pictures/blob/master/robbing_tickets/check_failed.png)  
 &emsp;其他未预料的结果，可以提交截图，Thanks♪(･ω･)ﾉ
