@@ -6,6 +6,8 @@
 '''
 12306刷票
 '''
+# import sys
+# sys.setrecursionlimit(1000000)   #修改递归深度可达1百万次
 import requests,re,sys
 import json,time,datetime
 from cookie_12306 import load_cookie,check_new_cookie,find_seat    #用于登录的cookies和检测cookie变化的模块，用于查找座席中文名的模块
@@ -17,7 +19,7 @@ from urllib import quote,unquote
 '''
 使用指南：
     请先用12306账号登录网站获取cookie，并填写到cookie12306.txt中，注意对号入座！
-    然后在此代码文件的48-55行中修改相应信息
+    然后在此代码文件的51-57行中修改相应信息
     
     最后运行此程序--
 
@@ -45,14 +47,14 @@ class PAPAPA12306:
     # __to_station = raw_input('输入到达站点：')
     # __passager_name = raw_input('输入乘客姓名：')
     #__purpose_codes = raw_input('输入车票类型（成人-1，学生-2）：')
-    train_date = '2018-01-16'
-    __from_station = '南宁'
-    __to_station = '重庆'
-    __purpose_codes = '1'  #忽略
-    __passager_name = '吉衣伍支莫'
 ##########################################################################################
-    __seat_type = ['硬座']    #指定坐席类别，靠前优先                              #
-    specific_train = ['K654']     #指定车次，靠前优先                                 #
+    train_date = '2018-01-16'   #开车日期                                                 #
+    __from_station = '上海'     #出发站                                                   #
+    __to_station = '北京'       #到达站                                                   #
+    __purpose_codes = '1'  #忽略                                                          #
+    __passager_name = '玲玲'   #旅客姓名                                                 #
+    __seat_type = ["硬座"]    #指定坐席类别，可定义多个，靠前优先                            #
+    specific_train = ["G104"]     #指定车次                                                #
 ##########################################################################################
 
 
@@ -104,25 +106,27 @@ class PAPAPA12306:
         '''
 
         print '******************************正在查询是否有票'
-
-        response = self.session.get(check_url,proxies=proxies)
-
-        #检测cookie是否变化，如果有则更新cookie文件,无则不变
-        dict_cookies = dict(self.cookie)
-        check_new_cookie(response.headers,dict_cookies)
-
-        #把字典类型的cookie传递给下一个函数
-
-        html = response.content
         try:
+            response = self.session.get(check_url,proxies=proxies)
 
+            #检测cookie是否变化，如果有则更新cookie文件,无则不变
+            dict_cookies = dict(self.cookie)
+            check_new_cookie(response.headers,dict_cookies)
+
+            #把字典类型的cookie传递给下一个函数
+
+            html = response.content
             json_data = json.loads(response.text)
 
         except ValueError:
-            #print '>>>>>切换代理中<<<<<'
+            print '>>>>>切换代理中'
             times+=1
             self.check_ticket_exist(check_url,times,proxies=Proxies)
-
+        except requests.exceptions.ConnectionError:
+            print '>>>>代理失效，重试中<<<<'
+            times += 1
+            time.sleep(2)
+            self.check_ticket_exist(check_url, times, proxies=Proxies)
 
         if json_data['status'] is True:
             print '>>>>>查询状态：成功!<<<<<'
@@ -141,7 +145,7 @@ class PAPAPA12306:
                 print '#####查询状态：失败!#####'
                 print response.text
                 sys.exit()
-        print '>>>>>自动分析站点<<<<<'
+        #print '>>>>>自动分析站点<<<<<'
         # for i in json_data['data']['map'].values():
         #     print i
         secret_str_list = re.findall('"([\w%]+)[|]',html)
@@ -494,6 +498,8 @@ class PAPAPA12306:
         if re.search("data....submitStatus..true",response.text):
             #print '>>>>>状态：OK！<<<<<'
             #print '模块：step_5,正在调试！，确认无误，可删掉此处断点', sys.exit()
+
+            time.sleep(2)
             # 调用执行第六个步骤即查询票价的方法
             self.step_6_check_ticket_price()
 
@@ -528,25 +534,39 @@ class PAPAPA12306:
 
         check_false_url = 'https://kyfw.12306.cn/otn/queryOrder/initNoCompleteQueue'
         check_true = re.search(self.__passager_name,html)
+        check_true_1 = re.search('from_station',html)
 
         false_msg = self.session.get(check_false_url).content
         check_false = re.search('出票失败',false_msg)
         if check_false:
             print '(︶︿︶) 出票失败了，账号可能单日撤单次数超过3次，请通过浏览器检查！'
             sys.exit()
-        elif check_true:
-            modify_time = re.search('modifyTime...(.*?).,',html).group(1)
-            fromStation = re.search('fromStationName...(.*?).,',html).group(1)
-            toStation = re.search('toStationName...(.*?).,',html).group(1)
-            startTime = re.search('startTimeString...(.*?).,',html).group(1)
-            passengerName = re.search('passengerName...(.*?).,',html).group(1)
+        elif check_true and check_true_1:
+            modify_time = re.search('reserve_time...(.*?).,',html).group(1)
+            fromStation = re.search('from_station_name_page....(.*?)..,',html).group(1)
+            toStation = re.search('to_station_name_page....(.*?)..,',html).group(1)
+            startTime = re.search('start_train_date_page...(.*?).,',html).group(1)
+            passengerName = re.search('passenger_name...(.*?).,',html).group(1)
 
             print '^_^订票成功！下单时间：%s ，票面信息：\n乘客：%s  出发站：%s  到达站：%s  开车时间：%s'% (modify_time,\
                                                                           passengerName,fromStation,toStation,startTime)
-            print '请在30分钟内付款，否则订单将失效！',response.content
+            print '请在30分钟内付款，否则订单将失效！'#,response.content
+            sys.exit()
+        elif check_true:
+            modify_time = re.search('requestTime...(.*?).,', html).group(1)
+            fromStation = re.search('fromStationName...(.*?).,', html).group(1)
+            toStation = re.search('toStationName...(.*?).,', html).group(1)
+            startTime = re.search('startTimeString...(.*?).,', html).group(1)
+            passengerName = re.search('passengerName...(.*?).,', html).group(1)
+
+            print '^_^订票成功！下单时间：%s ，票面信息：\n乘客：%s  出发站：%s  到达站：%s  开车时间：%s' % (modify_time, \
+                                                                              passengerName, fromStation, toStation,
+                                                                              startTime)
+            print '请在30分钟内付款，否则订单将失效！'  # ,response.content
             sys.exit()
         else:
-            print '12306系统忙或维护时间！请手动检查\n'
+            print '由于查询订票结果的url返回内容不易判断，请使用浏览器检查，一般到达此步90%抢票成功！\n' \
+                  '12306系统忙或维护时间！请手动检查\n'
             sys.exit()
 
 

@@ -3,9 +3,9 @@
 # @Author   : ELI
 # @IDE      : PyCharm
 # @PJ_NAME  : cookie_12306
-import requests,re
+import re
 from fake_useragent import UserAgent
-import time,sys,json
+import sys,json
 
 ua = UserAgent().random
 
@@ -18,6 +18,7 @@ seat_type_dict = {'hard_sleeper':'3','hard_seats':'1','soft_seats':'2','soft_sle
 month_dict = {'01':'Jan','02':'Feb','03':'Mar','04':'Apr','05':'May','06':'Jun','07':'Jul','08':'Aug','09':'Sep','10':'Oct','11':'Nov','12':'Dec'}
 
 week_dict = {'1':'Mon','2':'Tue','3':'Wed','4':'Thu','5':'Fri','6':'Sat','0':'Sun'}
+#代理示例
 proxies = {'https': 'https://118.114.77.47:8080',
            'https': 'https://125.210.121.113:3128',
            }
