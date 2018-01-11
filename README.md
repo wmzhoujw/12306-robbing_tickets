@@ -39,6 +39,7 @@
 
 ### 第三步：运行12306.py
 &emsp;第一种结果：表示成功抢到票或12306网站繁忙
+
   ![](https://github.com/chaseSpace/Pictures/blob/master/robbing_tickets/ok.png)  
 &emsp;第二种结果：表示无票，抢票中
   ![](https://github.com/chaseSpace/Pictures/blob/master/robbing_tickets/check_tickets.png)  
