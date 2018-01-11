@@ -38,12 +38,12 @@
 &emsp;&emsp;确认你填入的站点间有你填入的列车在运行
 
 ### 第三步：运行12306.py
-emsp;第一种结果：表示成功抢到票或12306网站繁忙  ![](https://github.com/chaseSpace/Pictures/blob/master/robbing_tickets/ok.png)  
-emsp;第二种结果：表示无票，抢票中  ![](https://github.com/chaseSpace/Pictures/blob/master/robbing_tickets/check_tickets.png)
-emsp;第三种结果：表示cookie失效，这时只需要刷新浏览器页面，将最新的tk和JSESSIONID字段值复制到cookie文件即可，若更换账号，则需检查其他是否变化  
-![](https://github.com/chaseSpace/Pictures/blob/master/robbing_tickets/not loggined.png)
-emsp;第四种结果：表示查票失败，可能有以下原因：  
-emsp;emsp;* 填入的车次不存在
-emsp;emsp;* 填入的车次没有该座席
-emsp;emsp;* 该车次当前时间未开放预订  ![](https://github.com/chaseSpace/Pictures/blob/master/robbing_tickets/check_failed.png)
-emsp;其他未预料的结果，可以提交截图，Thanks♪(･ω･)ﾉ
+&emsp;第一种结果：表示成功抢到票或12306网站繁忙  ![](https://github.com/chaseSpace/Pictures/blob/master/robbing_tickets/ok.png)  
+&emsp;第二种结果：表示无票，抢票中  ![](https://github.com/chaseSpace/Pictures/blob/master/robbing_tickets/check_tickets.png)
+&emsp;第三种结果：表示cookie失效，这时只需要刷新浏览器页面，将最新的tk和JSESSIONID字段值复制到cookie文件即可，若更换账号，则需检查其他是否变化  
+![](https://github.com/chaseSpace/Pictures/blob/master/robbing_tickets/not-loggined.png)
+&emsp;第四种结果：表示查票失败，可能有以下原因：  
+&emsp;&emsp;* 填入的车次不存在
+&emsp;&emsp;* 填入的车次没有该座席
+&emsp;&emsp;* 该车次当前时间未开放预订  ![](https://github.com/chaseSpace/Pictures/blob/master/robbing_tickets/check_failed.png)
+&emsp;其他未预料的结果，可以提交截图，Thanks♪(･ω･)ﾉ
